@@ -1,0 +1,126 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+
+\title{ScholarAI: Retrieval-Augmented Generation Learning Assistant}
+\subtitle{Node.js + Express + LangChain.js + ChromaDB}
+\author{Project Team}
+\date{May 17, 2026}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Problem and Goal}
+  \begin{itemize}
+    \item Students need fast, reliable answers grounded in course materials.
+    \item LLM-only answers can hallucinate or miss citations.
+    \item Goal: build a RAG system that returns accurate answers with sources.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What is RAG?}
+  \begin{itemize}
+    \item Retrieval-Augmented Generation combines search with generation.
+    \item Retrieve top-k relevant chunks, then generate with context.
+    \item Outcome: higher factuality and traceable citations.
+  \end{itemize}
+  \vspace{6pt}
+  $$\text{Answer} = f(\text{Question}, \text{Retrieved Context})$$
+\end{frame}
+
+\begin{frame}{System Architecture}
+  \begin{itemize}
+    \item Browser UI: upload, chat, sources manager.
+    \item Express API: upload, query, sources, health.
+    \item RAG engine: load, split, embed, store, retrieve, generate.
+  \end{itemize}
+  \vspace{4pt}
+  \small
+  \begin{verbatim}
+Browser -> Express Server -> RAG Engine -> ChromaDB + OpenAI
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}{Core Pipeline: Ingestion}
+  \begin{itemize}
+    \item Supported files: PDF, DOCX, TXT, MD.
+    \item Text extraction: pdf-parse, mammoth, fs.
+    \item Chunking: RecursiveCharacterTextSplitter (800 / 150 overlap).
+    \item Embeddings: text-embedding-3-small.
+    \item Storage: ChromaDB persistent vector store.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Core Pipeline: Query}
+  \begin{itemize}
+    \item Embed the question using the same embedding model.
+    \item Retrieve top-5 chunks by similarity.
+    \item Prompt template enforces grounded answers and citations.
+    \item LLM: gpt-4o-mini generates final answer.
+  \end{itemize}
+  \vspace{4pt}
+  \small
+  \begin{verbatim}
+Question -> Embed -> Retrieve -> Prompt -> LLM -> Answer + Sources
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}{Key Components (LangChain.js)}
+  \begin{itemize}
+    \item RecursiveCharacterTextSplitter for stable chunking.
+    \item OpenAIEmbeddings for vector representation.
+    \item Chroma vector store for similarity search.
+    \item RetrievalQAChain for end-to-end RAG.
+    \item PromptTemplate for structured, cited responses.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{API Surface}
+  \begin{itemize}
+    \item \texttt{GET /api/health}: readiness and source count.
+    \item \texttt{GET /api/sources}: list indexed sources.
+    \item \texttt{POST /api/upload}: ingest document.
+    \item \texttt{POST /api/query}: ask a question.
+    \item \texttt{DELETE /api/sources/:name}: remove a source.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Design Decisions}
+  \begin{itemize}
+    \item Deduplication by SHA-256 hash prevents re-indexing.
+    \item Chunk size 800 with 150 overlap balances recall and cost.
+    \item text-embedding-3-small for speed and affordability.
+    \item RetrievalQAChain returns source docs for citations.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Demo Flow}
+  \begin{enumerate}
+    \item Upload lecture notes (PDF/DOCX/TXT/MD).
+    \item Server extracts and indexes content.
+    \item Ask a question in the chat UI.
+    \item Receive answer with citations and suggestions.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Limitations and Future Work}
+  \begin{itemize}
+    \item Depends on document quality and extraction accuracy.
+    \item ChromaDB requires service availability.
+    \item Future: per-course namespaces, feedback loops, richer UI analytics.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Thank You}
+  \centering
+  Questions?
+\end{frame}
+
+\end{document}

@@ -1,0 +1,29 @@
+{
+  "name": "scholar-ai-rag",
+  "version": "1.0.0",
+  "description": "RAG Learning Assistant — LangChain.js + Express + ChromaDB",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.3.0",
+    "@langchain/core": "^0.3.0",
+    "@langchain/openai": "^0.3.0",
+    "@langchain/textsplitters": "^0.1.0",
+    "chromadb": "^1.9.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "langchain": "^0.3.0",
+    "mammoth": "^1.8.0",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.74.0",
+    "pdf-parse": "^1.1.1",
+    "uuid": "^10.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
